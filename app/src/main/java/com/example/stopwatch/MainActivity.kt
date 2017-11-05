@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 数値を00:00:00形式の文字列に変換する関数
+    // 数値を 00:00:00 形式の文字列に変換する関数
     // 引数timeにはデフォルト値0を設定、返却する型はnullableなString?型
     private fun timeToText(time: Int = 0): String? {
         // if式は値を返すため、そのままreturnできる
