@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
                     // timeToText(timeValue)の値がlet内ではitとして使える
                     timeText.text = it
                 }
-                handler.postDelayed(this, 1000)
+                handler.postDelayed(this, 1)
             }
         }
 
@@ -70,12 +70,13 @@ class MainActivity : AppCompatActivity() {
         return if (time < 0){
             null
         } else if (time == 0) {
-            "00:00:00"
+            "00:00.00"
         } else {
-            val h = time / 3600
-            val m = time % 3600 / 60
-            val s = time % 60
-            "%1$02d:%2$02d:%3$02d".format(h,m,s)
+            //val h = time / 3600
+            val m = time % 3600 / 60 / 1000
+            val s = time / 100
+            val ms = time % 100
+            "%1$02d:%2$02d.%3$02d".format(m,s,ms)
         }
     }
 }
