@@ -5,15 +5,19 @@ import android.os.Bundle
 import android.os.Handler
 import android.widget.Button
 import android.widget.TextView
+import java.text.SimpleDateFormat
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
+    //val dataFormat = SimpleDateFormat("mm:ss.SS")
+    //var time = dataFormat.format(System.currentTimeMillis())
+
     // 1度だけ代入するものはvalを使う
     val handler = Handler()
     // 繰り返し代入するためvarを使う
-    var timeValue = 0
+    var startTimeValue = 0L
 
 
     // 配置したView要素にアクセス
@@ -27,14 +31,14 @@ class MainActivity : AppCompatActivity() {
         val stopButton: Button = findViewById(R.id.stop)
         val resetButton: Button = findViewById(R.id.reset)
 
-        //1秒ごとに処理を実行
+        //1ミリ秒ごとに処理を実行
         val runnable = object : Runnable {
             override fun run() {
-                timeValue++
+                //timeValue++
 
                 // TextViewを更新
                 // ?.letを用いて、nullではない場合のみ更新
-                timeToText(timeValue)?.let {
+                timeToText(startTimeValue)?.let {
                     // timeToText(timeValue)の値がlet内ではitとして使える
                     timeText.text = it
                 }
@@ -44,6 +48,8 @@ class MainActivity : AppCompatActivity() {
 
         // start
         startButton.setOnClickListener {
+            if(startTimeValue == 0L )
+                startTimeValue = System.currentTimeMillis()
             handler.post(runnable)
         }
 
@@ -55,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         // reset
         resetButton.setOnClickListener {
             handler.removeCallbacks(runnable)
-            timeValue = 0
+            startTimeValue = 0L
             // timeToTextの引数はデフォルト値が設定されているので、引数省略できる
             timeToText()?.let {
                 timeText.text = it
@@ -63,19 +69,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 数値を"00:00:00"形式の文字列に変換する関数
+    // 数値を"00:00.00"形式の文字列に変換する関数
     // 引数timeにはデフォルト値0を設定、返却する型はnullableなString?型
-    private fun timeToText(time: Int = 0): String? {
+    private fun timeToText(time: Long = 0): String? {
         // if式は値を返すため、そのままreturnできる
         return if (time < 0){
             null
-        } else if (time == 0) {
+        } else if (time == 0L) {
             "00:00.00"
         } else {
-            //val h = time / 3600
-            val m = time % 3600 / 60 / 1000
-            val s = time / 100
-            val ms = time % 100
+
+            val elapsedTimeDate = System.currentTimeMillis() - time
+
+            var m = elapsedTimeDate / 60 / 1000
+            var s = (elapsedTimeDate - m * 60000) / 1000
+            var ms = (elapsedTimeDate - m * 60000 - s * 1000) / 10
+
             "%1$02d:%2$02d.%3$02d".format(m,s,ms)
         }
     }
